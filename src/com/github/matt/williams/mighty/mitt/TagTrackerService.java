@@ -1,5 +1,7 @@
 package com.github.matt.williams.mighty.mitt;
 
+import java.util.Arrays;
+
 import android.content.Context;
 
 public class TagTrackerService implements com.github.matt.williams.mighty.mitt.EstimoteService.Listener, com.github.matt.williams.mighty.mitt.AccelerometerService.Listener {
@@ -35,13 +37,18 @@ public class TagTrackerService implements com.github.matt.williams.mighty.mitt.E
         //android.util.Log.e(TAG, address + " - " + orientationToString(acceleration));
         //android.util.Log.e(TAG, "Phone - " + orientationToString(mAcceleration));
 
-        float[] normTagAccelerationYZ = MathUtils.norm2(new float[] {acceleration[1], acceleration[2]});
-        float[] normLocalAccelerationYZ = MathUtils.norm2(new float[] {mAcceleration[1], mAcceleration[2]});
-        float angle = (float)Math.acos(MathUtils.dot2(normTagAccelerationYZ, normLocalAccelerationYZ));
-        //android.util.Log.e(TAG, address + " - " + angle * 180 / Math.PI);
-
-        mListener.onTagUpdate(address, angle);
+        float roll = calculateAngle(acceleration[0], acceleration[2], mAcceleration[0], mAcceleration[2]);
+        float pitch = calculateAngle(acceleration[1], acceleration[2], mAcceleration[1], mAcceleration[2]);
+        float yaw = calculateAngle(acceleration[0], acceleration[1], mAcceleration[0], mAcceleration[1]);
+        
+        mListener.onTagUpdate(address, pitch);
     }
+
+	private float calculateAngle(float p0, float p1, float q0, float q1) {
+		float[] p = MathUtils.safeNorm2(new float[] {p0, p1});
+        float[] q = MathUtils.safeNorm2(new float[] {q0, q1});
+        return (float)Math.acos(MathUtils.dot2(p, q)) * -Math.signum(MathUtils.cross2(p, q));
+	}
 
     private String orientationToString(float[] acceleration) {
         float ax = acceleration[0];
