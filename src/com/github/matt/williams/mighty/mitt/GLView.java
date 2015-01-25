@@ -34,7 +34,7 @@ public class GLView extends GLSurfaceView implements Renderer, Listener {
     private float[] mCubeNormals;
     private static float[] COLOR_MATRIX;
     private FingerMap mFingerMap = new FingerMap();
-    private final Map<Finger, Float> mFingerAngles = new HashMap<Finger, Float>();
+    private final Map<Finger, float[]> mFingerAngles = new HashMap<Finger, float[]>();
 
     static {
         COLOR_MATRIX = new float[] {1.0f, 0.0f, 0.0f, 0.0f,
@@ -59,9 +59,9 @@ public class GLView extends GLSurfaceView implements Renderer, Listener {
     }
 
     @Override
-    public void onFingerUpdate(Finger finger, float angle) {
-        android.util.Log.e(TAG, finger + " - " + angle * 180 / Math.PI);
-        mFingerAngles.put(finger, angle);
+    public void onFingerUpdate(Finger finger, float[] angles) {
+        android.util.Log.e(TAG, finger + " - " + angles[1] * 180 / Math.PI);
+        mFingerAngles.put(finger, angles);
     }
 
     private void initialize() {
@@ -151,21 +151,23 @@ public class GLView extends GLSurfaceView implements Renderer, Listener {
     private void drawFinger(float[] matrix, Finger finger, float length)
     {
         if (mFingerMap.getAddress(finger) != null) {
-            Float maybeAngle = mFingerAngles.get(finger);
-            float angle = (maybeAngle != null) ? maybeAngle * 180 / (float)Math.PI: 0f;
-            float angle1 = (angle < 90) ? 0 : angle - 90;
-            float angle2 = (angle < 90) ? angle : 90;
-            drawFinger(matrix, angle1, angle2, length, 0.8f, 0, 0, 0.5f);
+            float[] maybeAngles = mFingerAngles.get(finger);
+            float[] angles = (maybeAngles != null) ? new float[] {maybeAngles[0] * 180 / (float)Math.PI, maybeAngles[1] * 180 / (float)Math.PI, maybeAngles[2] * 180 / (float)Math.PI} : new float[] {0, 0, 0};
+            float[] angles1 = new float[] {angles[0], (angles[1] < 90) ? 0 : angles[1] - 90, angles[2]};
+            float[] angles2 = new float[] {0, (angles[1] < 90) ? angles[1] : 90, 0};
+            drawFinger(matrix, angles1, angles2, length, 0.8f, 0, 0, 0.5f);
         } else {
-            drawFinger(matrix, 0, 0, length, 0.5f, 0.5f, 0.5f, 0.5f);
+            drawFinger(matrix, new float[] {0, 0, 0}, new float[] {0, 0, 0}, length, 0.5f, 0.5f, 0.5f, 0.5f);
         }
     };
 
-    private void drawFinger(float[] matrix, float angle1, float angle2, float length, float r, float g, float b, float mix) {
+    private void drawFinger(float[] matrix, float[] angles1, float[] angles2, float length, float r, float g, float b, float mix) {
         float[] boneMatrix = new float[16];
         Matrix.translateM(matrix, 0, 0, length/2 - 0.75f, 0);
         Matrix.translateM(matrix, 0, 0, -length/2 - 0.25f, 0);
-        Matrix.rotateM(matrix, 0, angle1, -1, 0, 0);
+        Matrix.rotateM(matrix, 0, angles1[2], 0, 0, -1);
+        Matrix.rotateM(matrix, 0, angles1[0], 0, -1, 0);
+        Matrix.rotateM(matrix, 0, angles1[1], -1, 0, 0);
         Matrix.translateM(matrix, 0, 0, length / 2 + 0.25f, 0);
         System.arraycopy(matrix, 0, boneMatrix, 0, 16);
         Matrix.scaleM(matrix, 0, 0.9f, length, 0.9f);
@@ -174,7 +176,9 @@ public class GLView extends GLSurfaceView implements Renderer, Listener {
         System.arraycopy(boneMatrix, 0, matrix, 0, 16);
         Matrix.translateM(matrix, 0, 0, length + 0.25f, 0);
         Matrix.translateM(matrix, 0, 0, -length / 2 - 0.25f, 0);
-        Matrix.rotateM(matrix, 0, angle2, -1, 0, 0);
+        Matrix.rotateM(matrix, 0, angles2[2], 0, 0, -1);
+        Matrix.rotateM(matrix, 0, angles2[0], 0, -1, 0);
+        Matrix.rotateM(matrix, 0, angles2[1], -1, 0, 0);
         Matrix.translateM(matrix, 0, 0, length / 2 + 0.25f, 0);
         Matrix.scaleM(matrix, 0, 0.9f, length, 0.9f);
         drawCube(matrix, r, g, b, mix);

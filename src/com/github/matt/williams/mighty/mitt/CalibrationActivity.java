@@ -28,9 +28,7 @@ public class CalibrationActivity extends ListActivity implements com.github.matt
 
     private class AddressCandidate {
         String address;
-        float minAngle;
-        float maxAngle;
-        float angle;
+        float minPitch, maxPitch, pitch;
 
         @Override
         public boolean equals(Object other) {
@@ -46,7 +44,7 @@ public class CalibrationActivity extends ListActivity implements com.github.matt
 
         @Override
         public String toString() {
-            return String.format(getString(R.string.candidate_label), address, (angle * 180 / Math.PI), (minAngle * 180 / Math.PI), (maxAngle * 180 / Math.PI));
+            return String.format(getString(R.string.candidate_label), address, (pitch * 180 / Math.PI), (minPitch * 180 / Math.PI), (maxPitch * 180 / Math.PI));
         }
     }
 
@@ -106,28 +104,29 @@ public class CalibrationActivity extends ListActivity implements com.github.matt
     }
 
     @Override
-    public void onTagUpdate(String address, float angle) {
-        android.util.Log.e(TAG, address + " - " + angle * 180 / Math.PI);
+    public void onTagUpdate(String address, float[] angles) {
+    	float pitch = angles[1];
+        android.util.Log.e(TAG, address + " - " + pitch * 180 / Math.PI);
         AddressCandidate newCandidate = new AddressCandidate();
         newCandidate.address = address;
         int index = mAddressCandidates.indexOf(newCandidate);
         if (index != -1) {
             AddressCandidate candidate = mAddressCandidates.get(index);
-            candidate.maxAngle = Math.max(candidate.maxAngle, angle);
-            candidate.minAngle = Math.min(candidate.minAngle, angle);
-            candidate.angle = angle;
+            candidate.maxPitch = Math.max(candidate.maxPitch, pitch);
+            candidate.minPitch = Math.min(candidate.minPitch, pitch);
+            candidate.pitch = pitch;
         } else {
-            newCandidate.minAngle = angle;
-            newCandidate.maxAngle = angle;
-            newCandidate.angle = angle;
+            newCandidate.minPitch = pitch;
+            newCandidate.maxPitch = pitch;
+            newCandidate.pitch = pitch;
             mAddressCandidates.add(newCandidate);
         }
         Collections.sort(mAddressCandidates, new Comparator<AddressCandidate>() {
             @Override
             public int compare(AddressCandidate lhs, AddressCandidate rhs) {
-                if (lhs.maxAngle - lhs.minAngle > rhs.maxAngle - rhs.minAngle) {
+                if (lhs.maxPitch - lhs.minPitch > rhs.maxPitch - rhs.minPitch) {
                     return -1;
-                } else if (lhs.maxAngle - lhs.minAngle < rhs.maxAngle - rhs.minAngle) {
+                } else if (lhs.maxPitch - lhs.minPitch < rhs.maxPitch - rhs.minPitch) {
                     return 1;
                 } else {
                     return lhs.address.compareTo(rhs.address);

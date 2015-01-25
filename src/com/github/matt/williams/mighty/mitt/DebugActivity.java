@@ -125,13 +125,13 @@ public class DebugActivity extends ListActivity implements Listener {
     }
 
     @Override
-    public void onFingerUpdate(Finger finger, float angle) {
+    public void onFingerUpdate(Finger finger, float[] angles) {
         android.util.Log.e(TAG, "In onFingerUpdate...");
         ArrayAdapter<String> adapter = (ArrayAdapter<String>)getListAdapter();
         adapter.setNotifyOnChange(false);
         int fingerIndex = Arrays.asList(Finger.values()).indexOf(finger);
         adapter.remove(adapter.getItem(fingerIndex));
-        adapter.insert(String.format("%1$s - %2$1.1f degrees", finger, angle * 180 / Math.PI), fingerIndex);
+        adapter.insert(String.format("%1$s - (%2$1.1f, %3$1.1f, %4$1.1f)", finger, angles[0] * 180 / Math.PI, angles[1] * 180 / Math.PI, angles[2] * 180 / Math.PI), fingerIndex);
         Message message = mHandler.obtainMessage();
         message.sendToTarget();
         android.util.Log.e(TAG, "onFingerUpdate done!");

@@ -9,7 +9,7 @@ public class HandTrackerService extends TagTrackerService implements com.github.
     private Listener mListener;
 
     public static interface Listener {
-        public void onFingerUpdate(Finger finger, float theta);
+        public void onFingerUpdate(Finger finger, float[]	angles);
     }
 
     public HandTrackerService() {
@@ -32,10 +32,10 @@ public class HandTrackerService extends TagTrackerService implements com.github.
     }
 
     @Override
-    public void onTagUpdate(String address, float angle) {
+    public void onTagUpdate(String address, float[] angles) {
         Finger finger = mFingerMap.getFinger(address);
         if (finger != null) {
-            mListener.onFingerUpdate(finger, angle);
+            mListener.onFingerUpdate(finger, angles);
         }
     }
 }
