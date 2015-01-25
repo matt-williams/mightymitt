@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.github.matt.williams.mightmitt.MainActivity" >
+
+    <item
+        android:id="@+id/action_calibrate"
+        android:orderInCategory="50"
+        android:showAsAction="never"
+        android:title="@string/action_calibrate"/>
+
+    <item
+        android:id="@+id/action_clear_settings"
+        android:orderInCategory="75"
+        android:showAsAction="never"
+        android:title="@string/action_clear_settings"/>
+
+    <item
+        android:id="@+id/action_debug"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:title="@string/action_debug"/>
+
+<!--
+    <item
+        android:id="@+id/action_settings"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:title="@string/action_settings"/>
+ -->
+</menu>

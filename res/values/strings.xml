@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">MightyMitt</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_calibrate">Calibrate</string>
+    <string name="calibrate">Calibrate</string>
+    <string name="calibrate_format">Calibrating %1$s...</string>
+    <string name="select_finger">Select Finger</string>
+    <string name="candidate_label">%1$s - %2$1.1f deg (%3$1.1f - %4$1.1f)</string>
+    <string name="action_clear_settings">Clear Settings</string>
+    <string name="action_debug">Toggle Debug</string>
+    
+</resources>

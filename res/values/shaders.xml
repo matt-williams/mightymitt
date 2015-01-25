@@ -1,0 +1,27 @@
+<resources>
+
+<string name="vertexShader"><![CDATA[
+attribute vec3 vertex;
+attribute vec3 normal;
+uniform mat4 matrix;
+uniform vec3 baseColor;
+uniform float colorMix;
+uniform mat4 colorMatrix;
+varying lowp vec4 color;
+
+void main() {
+  gl_Position = matrix * vec4(vertex, 1.0);
+  color = mix(abs(colorMatrix * normal), baseColor, colorMix);
+}
+]]></string>
+   
+   
+<string name="fragmentShader"><![CDATA[
+varying lowp vec4 color;
+ 
+void main() {
+  gl_FragColor = color;
+}
+]]></string>
+
+</resources>
